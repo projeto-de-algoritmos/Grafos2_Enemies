@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="UTF-8" />
+		<title>T2 - PA</title>
+
+		<style>
+			#screen {
+				/* border: 1px solid black; */
+				box-shadow: 0 0 10px black;
+				image-rendering: pixelated;
+				image-rendering: crispEdges;
+				image-rendering: -moz-crisp-edges;
+				width: 400px;
+				height: 400px;
+			}
+			body {
+				display: flex;
+				background-color: #222;
+				align-items: center;
+				justify-content: center;
+			}
+			canvas {
+				background-color: #444;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="screen"></canvas>
+
+		<script type="module">
+			import createGame from "./game.js";
+			import createEnemies from "./enemies.js";
+			import createKeyboardListener from "./keyboardListener.js";
+			import renderScreen from "./renderScreen.js";
+
+			const game = createGame();
+			const keyboardListener = createKeyboardListener(document);
+			const enemies = createEnemies(game);
+			const screen = document.getElementById("screen");
+			const context = screen.getContext("2d");
+			context.canvas.width = game.state.screen.width;
+			context.canvas.height = game.state.screen.height;
+
+			window.onload = () => {
+				renderScreen(screen, game, requestAnimationFrame);
+				keyboardListener.subscribe(game.playerCtrl);
+				enemies.subscribe(game.playerCtrl);
+				game.subscribe(enemies.search);
+				game.start();
+				enemies.start();
+				enemies.walk();
+			};
+		</script>
+	</body>
+</html>
